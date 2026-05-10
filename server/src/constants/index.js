@@ -1,0 +1,17 @@
+export const DB_NAME = 'syncflow';
+
+export const TASK_STATUS = Object.freeze({
+  TODO: 'Todo',
+  IN_PROGRESS: 'In Progress',
+  DONE: 'Done',
+});
+
+export const ACTIVITY_ACTIONS = Object.freeze({
+  PROJECT_CREATED: 'PROJECT_CREATED',
+  MEMBER_ADDED: 'MEMBER_ADDED',
+  TASK_CREATED: 'TASK_CREATED',
+  TASK_UPDATED: 'TASK_UPDATED',
+  TASK_DELETED: 'TASK_DELETED',
+  STATUS_CHANGED: 'STATUS_CHANGED',
+  ASSIGNMENT_CHANGED: 'ASSIGNMENT_CHANGED',
+});
