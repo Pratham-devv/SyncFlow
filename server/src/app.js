@@ -21,9 +21,15 @@ app.get('/api/health', (_req, res) => {
 
 // ── Route Imports ──────────────────────────────────────────────
 import authRoutes from './modules/auth/auth.routes.js';
+import projectRoutes from './modules/projects/project.routes.js';
+import taskRoutes from './modules/tasks/task.routes.js';
+import activityRoutes from './modules/activities/activity.routes.js';
 
 // ── Mount Routes ───────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/activities', activityRoutes);
 
 // ── 404 Handler ────────────────────────────────────────────────
 app.use((_req, _res, next) => {
