@@ -66,7 +66,8 @@ const ProjectsPage = () => {
             {projects.map((project, i) => (
               <div
                 key={project._id}
-                className="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group"
+                onClick={() => navigate(`/projects/${project._id}`)}
+                className="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
                 style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
               >
                 <div className="flex items-start justify-between mb-3">
@@ -95,14 +96,14 @@ const ProjectsPage = () => {
                   <AvatarGroup users={project.members || []} max={4} size={28} />
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => setMemberTarget(project)}
+                      onClick={(e) => { e.stopPropagation(); setMemberTarget(project); }}
                       className="p-1.5 rounded-lg text-slate-400 hover:bg-brand-50 hover:text-brand-600 transition-colors cursor-pointer"
                       title="Add member"
                     >
                       <UserPlus size={16} />
                     </button>
                     <button
-                      onClick={() => navigate(`/tasks?project=${project._id}`)}
+                      onClick={(e) => { e.stopPropagation(); navigate(`/tasks?project=${project._id}`); }}
                       className="px-3 py-1.5 text-xs font-bold text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 transition-colors cursor-pointer"
                     >
                       View Tasks

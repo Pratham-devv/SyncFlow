@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   getTasks,
   createTask,
+  updateTask,
   deleteTask,
   updateTaskStatus,
 } from '../api/tasks.api';
@@ -58,6 +59,12 @@ const useTasks = (projectId) => {
     setFilters((prev) => ({ ...prev, status, page: 1 }));
   };
 
+  const handleUpdate = async (taskId, data) => {
+    const res = await updateTask(taskId, data);
+    await fetchTasks();
+    return res.data.data;
+  };
+
   return {
     tasks,
     pagination,
@@ -69,6 +76,7 @@ const useTasks = (projectId) => {
     handleCreate,
     handleDelete,
     handleStatusChange,
+    handleUpdate,
   };
 };
 

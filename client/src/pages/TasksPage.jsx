@@ -6,6 +6,8 @@ import useTasks from '../hooks/useTasks';
 import useActivities from '../hooks/useActivities';
 import TaskCard from '../components/tasks/TaskCard';
 import CreateTaskModal from '../components/tasks/CreateTaskModal';
+import UpdateTaskModal from '../components/tasks/UpdateTaskModal';
+import AssignTaskMemberModal from '../components/tasks/AssignTaskMemberModal';
 import ActivityFeed from '../components/activities/ActivityFeed';
 import EmptyState from '../components/ui/EmptyState';
 import { TASK_STATUS } from '../constants';
@@ -17,6 +19,8 @@ const TasksPage = () => {
   const { projects } = useProjects();
   const [selectedProjectId, setSelectedProjectId] = useState(projectIdParam || '');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [taskToUpdate, setTaskToUpdate] = useState(null);
+  const [taskToAssign, setTaskToAssign] = useState(null);
 
   // Auto-select first project when list loads and nothing is selected
   useEffect(() => {
@@ -38,6 +42,7 @@ const TasksPage = () => {
     handleCreate,
     handleDelete,
     handleStatusChange,
+    handleUpdate,
   } = useTasks(selectedProjectId);
 
   const { activities, loading: activitiesLoading, refetch: refetchActivities } = useActivities(selectedProjectId);
@@ -58,6 +63,16 @@ const TasksPage = () => {
 
   const onCreate = async (data) => {
     await handleCreate(data);
+    refetchActivities();
+  };
+
+  const onUpdateTask = async (taskId, data) => {
+    await handleUpdate(taskId, data);
+    refetchActivities();
+  };
+
+  const onAssignTask = async (taskId, assignedTo) => {
+    await handleUpdate(taskId, { assignedTo });
     refetchActivities();
   };
 
@@ -148,6 +163,8 @@ const TasksPage = () => {
                   task={task}
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}
+                  onEdit={(t) => setTaskToUpdate(t)}
+                  onAddMember={(t) => setTaskToAssign(t)}
                 />
               ))}
             </div>
@@ -163,6 +180,23 @@ const TasksPage = () => {
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onCreate={onCreate}
+        members={currentProject?.members || []}
+      />
+
+      {/* Update task modal */}
+      <UpdateTaskModal
+        open={!!taskToUpdate}
+        onClose={() => setTaskToUpdate(null)}
+        onUpdate={onUpdateTask}
+        task={taskToUpdate}
+      />
+
+      {/* Assign member modal */}
+      <AssignTaskMemberModal
+        open={!!taskToAssign}
+        onClose={() => setTaskToAssign(null)}
+        onAssign={onAssignTask}
+        task={taskToAssign}
         members={currentProject?.members || []}
       />
     </div>

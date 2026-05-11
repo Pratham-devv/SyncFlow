@@ -51,14 +51,14 @@ const TaskCard = ({ task, onDelete, onStatusChange, onEdit, onAddMember }) => {
           {showMenu && (
             <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-lg z-10 py-1 overflow-hidden" style={{ zIndex: 50 }}>
               <button 
-                onClick={() => { setShowMenu(false); onEdit(); }}
+                onClick={() => { setShowMenu(false); onEdit(task); }}
                 className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
               >
                 <Edit size={14} />
                 Update Task
               </button>
               <button 
-                onClick={() => { setShowMenu(false); /* onAddMember */ }}
+                onClick={() => { setShowMenu(false); onAddMember(task); }}
                 className="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
               >
                 <UserPlus size={14} />

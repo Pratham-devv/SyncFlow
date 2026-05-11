@@ -4,6 +4,7 @@ import AppShell from './components/layout/AppShell';
 import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
+import ProjectDetailsPage from './pages/ProjectDetailsPage';
 import TasksPage from './pages/TasksPage';
 
 // Protected route wrapper
@@ -62,6 +63,7 @@ const AppRoutes = () => (
             <Routes>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/projects/:id" element={<ProjectDetailsPage />} />
               <Route path="/tasks" element={<TasksPage />} />
               <Route path="/settings" element={<PlaceholderPage name="Settings" />} />
               <Route path="*" element={<Navigate to="/" replace />} />

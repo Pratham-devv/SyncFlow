@@ -91,7 +91,7 @@ const DashboardPage = () => {
                 key={p._id}
                 project={p}
                 index={i}
-                onClick={() => navigate(`/tasks?project=${p._id}`)}
+                onClick={() => navigate(`/projects/${p._id}`)}
               />
             ))}
           </div>
