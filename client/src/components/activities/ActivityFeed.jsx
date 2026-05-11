@@ -57,7 +57,7 @@ const ActivityFeedContent = ({ activities, loading, onCloseMobile }) => (
                 <span className="font-semibold text-slate-900 dark:text-white">
                   {item.user?.name || 'Unknown'}
                 </span>{' '}
-                {item.details}
+                <span className="text-slate-500">{item.message}</span>
               </p>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                 {new Date(item.createdAt).toLocaleDateString()}{' '}
