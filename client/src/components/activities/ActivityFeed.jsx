@@ -3,6 +3,7 @@ import {
   Plus,
   Timer,
   Trash2,
+  X,
 } from 'lucide-react';
 
 const ACTION_ICONS = {
@@ -15,17 +16,29 @@ const ACTION_ICONS = {
   ASSIGNMENT_CHANGED: { icon: Plus, bg: 'rgba(124,58,237,0.1)', clr: '#7c3aed' },
 };
 
-const ActivityFeed = ({ activities = [], loading = false }) => {
+const ActivityFeed = ({ activities = [], loading = false, mobileOpen = false, onCloseMobile }) => {
   return (
-    <aside className="hidden lg:flex flex-col w-72 xl:w-80 bg-white border-l border-slate-200 overflow-hidden shrink-0">
-      <div className="px-5 py-4 border-b border-slate-200">
-        <h3
-          className="font-bold text-slate-900"
-          style={{ fontFamily: 'var(--font-heading)' }}
-        >
-          Activity
-        </h3>
-      </div>
+    <>
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 bg-black/30 z-40 lg:hidden" onClick={onCloseMobile} />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`fixed inset-y-0 right-0 z-50 lg:static flex flex-col w-72 xl:w-80 bg-white border-l border-slate-200 overflow-hidden shrink-0 transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
+        <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+          <h3
+            className="font-bold text-slate-900"
+            style={{ fontFamily: 'var(--font-heading)' }}
+          >
+            Activity
+          </h3>
+          {onCloseMobile && (
+            <button onClick={onCloseMobile} className="lg:hidden p-1 text-slate-400 hover:bg-slate-100 rounded-lg">
+              <X size={18} />
+            </button>
+          )}
+        </div>
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
         {loading && (
           <p className="text-sm text-slate-400 text-center py-8">Loading…</p>
@@ -67,6 +80,7 @@ const ActivityFeed = ({ activities = [], loading = false }) => {
         })}
       </div>
     </aside>
+    </>
   );
 };
 

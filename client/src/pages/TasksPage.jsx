@@ -1,15 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Plus, CheckCircle2 } from 'lucide-react';
+import { Plus, CheckCircle2, Activity } from 'lucide-react';
 import useProjects from '../hooks/useProjects';
 import useTasks from '../hooks/useTasks';
 import useActivities from '../hooks/useActivities';
+import {
+  DndContext,
+  DragOverlay,
+  closestCorners,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import TaskCard from '../components/tasks/TaskCard';
+import DroppableColumn from '../components/tasks/DroppableColumn';
 import CreateTaskModal from '../components/tasks/CreateTaskModal';
 import UpdateTaskModal from '../components/tasks/UpdateTaskModal';
 import AssignTaskMemberModal from '../components/tasks/AssignTaskMemberModal';
 import ActivityFeed from '../components/activities/ActivityFeed';
 import EmptyState from '../components/ui/EmptyState';
+import Pagination from '../components/ui/Pagination';
 import { TASK_STATUS } from '../constants';
 
 const TasksPage = () => {
@@ -21,6 +32,9 @@ const TasksPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [taskToUpdate, setTaskToUpdate] = useState(null);
   const [taskToAssign, setTaskToAssign] = useState(null);
+  const [showMobileActivity, setShowMobileActivity] = useState(false);
+  const [boardTasks, setBoardTasks] = useState([]);
+  const [activeTask, setActiveTask] = useState(null);
 
   // Auto-select first project when list loads and nothing is selected
   useEffect(() => {
@@ -36,9 +50,11 @@ const TasksPage = () => {
 
   const {
     tasks,
+    pagination,
     loading,
     filters,
     setStatusFilter,
+    setPage,
     handleCreate,
     handleDelete,
     handleStatusChange,
@@ -75,6 +91,86 @@ const TasksPage = () => {
     await handleUpdate(taskId, { assignedTo });
     refetchActivities();
   };
+
+  useEffect(() => {
+    setBoardTasks(tasks);
+  }, [tasks]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
+  );
+
+  const handleDragStart = (event) => {
+    const { active } = event;
+    const task = boardTasks.find((t) => t._id === active.id);
+    if (task) setActiveTask(task);
+  };
+
+  const handleDragOver = (event) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+    if (activeId === overId) return;
+
+    const isActiveTask = active.data.current?.type === 'Task';
+    const isOverTask = over.data.current?.type === 'Task';
+
+    if (!isActiveTask) return;
+
+    const activeTaskObj = boardTasks.find(t => t._id === activeId);
+    if (!activeTaskObj) return;
+
+    let overContainer = null;
+    if (isOverTask) {
+      const overTaskObj = boardTasks.find(t => t._id === overId);
+      overContainer = overTaskObj?.status;
+    } else {
+      overContainer = overId;
+    }
+
+    if (!overContainer || activeTaskObj.status === overContainer) return;
+
+    setBoardTasks((prev) => {
+      const newBoard = [...prev];
+      const activeIndex = prev.findIndex(t => t._id === activeId);
+      newBoard[activeIndex] = { ...newBoard[activeIndex], status: overContainer };
+      return newBoard;
+    });
+  };
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+    setActiveTask(null);
+
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    const activeTaskObj = boardTasks.find(t => t._id === activeId);
+    if (!activeTaskObj) return;
+
+    let overContainer = null;
+    const isOverTask = over.data.current?.type === 'Task';
+    if (isOverTask) {
+      const overTaskObj = boardTasks.find(t => t._id === overId);
+      overContainer = overTaskObj?.status;
+    } else {
+      overContainer = overId;
+    }
+
+    const originalTask = tasks.find(t => t._id === activeId);
+    if (originalTask && originalTask.status !== overContainer) {
+      await onStatusChange(activeId, overContainer);
+    }
+  };
+
+  const todoTasks = boardTasks.filter(t => t.status === TASK_STATUS.TODO);
+  const inProgressTasks = boardTasks.filter(t => t.status === TASK_STATUS.IN_PROGRESS);
+  const doneTasks = boardTasks.filter(t => t.status === TASK_STATUS.DONE);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -128,6 +224,14 @@ const TasksPage = () => {
               >
                 <Plus size={16} /> New Task
               </button>
+              
+              <button
+                onClick={() => setShowMobileActivity(true)}
+                className="flex lg:hidden items-center justify-center p-2 text-slate-500 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
+                title="View Activity"
+              >
+                <Activity size={18} />
+              </button>
             </div>
           </div>
 
@@ -156,23 +260,65 @@ const TasksPage = () => {
               }
             />
           ) : (
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 pb-6">
-              {tasks.map((task) => (
-                <TaskCard
-                  key={task._id}
-                  task={task}
+            <DndContext 
+              sensors={sensors} 
+              collisionDetection={closestCorners} 
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDragEnd={handleDragEnd}
+            >
+              <div className="flex flex-row gap-4 md:gap-6 pb-6 h-full overflow-x-auto items-start snap-x snap-mandatory">
+                <DroppableColumn 
+                  id={TASK_STATUS.TODO} 
+                  title="To Do" 
+                  tasks={todoTasks} 
+                  colorClass="bg-slate-400" 
+                  borderClass="border-slate-200"
+                  onEdit={(t) => setTaskToUpdate(t)}
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}
-                  onEdit={(t) => setTaskToUpdate(t)}
                   onAddMember={(t) => setTaskToAssign(t)}
                 />
-              ))}
-            </div>
+                <DroppableColumn 
+                  id={TASK_STATUS.IN_PROGRESS} 
+                  title="In Progress" 
+                  tasks={inProgressTasks} 
+                  colorClass="bg-brand-500" 
+                  borderClass="border-brand-200"
+                  onEdit={(t) => setTaskToUpdate(t)}
+                  onDelete={onDelete}
+                  onStatusChange={onStatusChange}
+                  onAddMember={(t) => setTaskToAssign(t)}
+                />
+                <DroppableColumn 
+                  id={TASK_STATUS.DONE} 
+                  title="Done" 
+                  tasks={doneTasks} 
+                  colorClass="bg-emerald-500" 
+                  borderClass="border-emerald-200"
+                  onEdit={(t) => setTaskToUpdate(t)}
+                  onDelete={onDelete}
+                  onStatusChange={onStatusChange}
+                  onAddMember={(t) => setTaskToAssign(t)}
+                />
+              </div>
+              <DragOverlay>
+                {activeTask ? <TaskCard task={activeTask} /> : null}
+              </DragOverlay>
+            </DndContext>
           )}
+
+          {/* Pagination controls */}
+          <Pagination pagination={pagination} onPageChange={setPage} />
         </div>
 
         {/* Activity sidebar */}
-        <ActivityFeed activities={activities} loading={activitiesLoading} />
+        <ActivityFeed 
+          activities={activities} 
+          loading={activitiesLoading} 
+          mobileOpen={showMobileActivity} 
+          onCloseMobile={() => setShowMobileActivity(false)} 
+        />
       </div>
 
       {/* Create task modal */}

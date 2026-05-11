@@ -1,15 +1,22 @@
+import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Users, CheckCircle, Clock, Circle, LayoutList, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Users, CheckCircle, Clock, Circle, LayoutList, ChevronRight, Activity } from 'lucide-react';
 import useProjects from '../hooks/useProjects';
 import useTasks from '../hooks/useTasks';
+import useActivities from '../hooks/useActivities';
 import AvatarGroup from '../components/ui/AvatarGroup';
+import ActivityFeed from '../components/activities/ActivityFeed';
+import AddMemberModal from '../components/projects/AddMemberModal';
 import { TASK_STATUS } from '../constants';
 
 const ProjectDetailsPage = () => {
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [showMobileActivity, setShowMobileActivity] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate();
-  const { projects, loading: projectsLoading } = useProjects();
+  const { projects, loading: projectsLoading, handleAddMember } = useProjects();
   const { tasks, loading: tasksLoading } = useTasks(id);
+  const { activities, loading: activitiesLoading } = useActivities(id);
 
   const project = projects.find((p) => p._id === id);
 
@@ -40,8 +47,11 @@ const ProjectDetailsPage = () => {
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
-    <div className="flex-1 overflow-y-auto bg-slate-50">
-      <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
+    <div className="flex-1 flex overflow-hidden bg-slate-50">
+      
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto p-4 md:p-8">
+        <div className="max-w-5xl mx-auto space-y-6">
         
         {/* Navigation & Header */}
         <div>
@@ -64,13 +74,23 @@ const ProjectDetailsPage = () => {
                 {project.description || 'No description provided for this project.'}
               </p>
             </div>
-            <Link
-              to={`/tasks?project=${project._id}`}
-              className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-colors shadow-sm shrink-0"
-            >
-              <LayoutList size={18} />
-              Open Task Board
-            </Link>
+            <div className="flex gap-2">
+              <Link
+                to={`/tasks?project=${project._id}`}
+                className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-colors shadow-sm shrink-0"
+              >
+                <LayoutList size={18} />
+                Open Task Board
+              </Link>
+              
+              <button
+                onClick={() => setShowMobileActivity(true)}
+                className="flex lg:hidden items-center justify-center p-2.5 text-slate-500 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
+                title="View Activity"
+              >
+                <Activity size={18} />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -138,12 +158,35 @@ const ProjectDetailsPage = () => {
               <h3 className="font-bold text-slate-900 mb-3 text-sm uppercase tracking-wider text-slate-400">Team Members ({project.members?.length || 0})</h3>
               <div className="flex items-center justify-between">
                 <AvatarGroup users={project.members || []} max={6} size={36} />
+                <button
+                  onClick={() => setShowAddMember(true)}
+                  className="px-3 py-1.5 text-xs font-bold text-brand-600 bg-brand-50 rounded-lg hover:bg-brand-100 transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <Users size={14} /> Add Member
+                </button>
               </div>
             </div>
           </div>
         </div>
 
+        </div>
       </div>
+
+      {/* Activity sidebar */}
+      <ActivityFeed 
+        activities={activities} 
+        loading={activitiesLoading} 
+        mobileOpen={showMobileActivity}
+        onCloseMobile={() => setShowMobileActivity(false)}
+      />
+      
+      {showAddMember && (
+        <AddMemberModal
+          project={project}
+          onClose={() => setShowAddMember(false)}
+          onAdd={handleAddMember}
+        />
+      )}
     </div>
   );
 };

@@ -65,6 +65,10 @@ const useTasks = (projectId) => {
     return res.data.data;
   };
 
+  const setPage = (page) => {
+    setFilters((prev) => ({ ...prev, page }));
+  };
+
   return {
     tasks,
     pagination,
@@ -72,6 +76,7 @@ const useTasks = (projectId) => {
     error,
     filters,
     setStatusFilter,
+    setPage,
     fetchTasks,
     handleCreate,
     handleDelete,
