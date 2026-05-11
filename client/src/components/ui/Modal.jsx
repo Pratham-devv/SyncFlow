@@ -10,22 +10,22 @@ const Modal = ({ open, onClose, title, children, maxWidth = 'max-w-2xl' }) => {
       onClick={onClose}
     >
       <div
-        className={`bg-white w-full ${maxWidth} rounded-2xl border border-slate-200 flex flex-col overflow-hidden`}
+        className={`bg-white dark:bg-dark-card w-full ${maxWidth} rounded-2xl border border-slate-200 dark:border-dark-border flex flex-col overflow-hidden`}
         style={{ maxHeight: '90vh', boxShadow: '0 25px 60px rgba(0,0,0,0.18)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         {title && (
-          <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between shrink-0">
+          <div className="px-6 py-4 border-b border-slate-200 dark:border-dark-border flex items-center justify-between shrink-0">
             <h3
-              className="font-bold text-slate-900 text-lg"
+              className="font-bold text-slate-900 dark:text-white text-lg"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               {title}
             </h3>
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+              className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
             >
               <X size={18} />
             </button>

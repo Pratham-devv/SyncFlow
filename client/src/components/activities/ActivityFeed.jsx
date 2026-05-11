@@ -25,26 +25,26 @@ const ActivityFeed = ({ activities = [], loading = false, mobileOpen = false, on
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 right-0 z-50 lg:static flex flex-col w-72 xl:w-80 bg-white border-l border-slate-200 overflow-hidden shrink-0 transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
-        <div className="px-5 py-4 border-b border-slate-200 flex items-center justify-between">
+      <aside className={`fixed inset-y-0 right-0 z-50 lg:static flex flex-col w-72 xl:w-80 bg-white dark:bg-dark-surface border-l border-slate-200 dark:border-dark-border overflow-hidden shrink-0 transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
+        <div className="px-5 py-4 border-b border-slate-200 dark:border-dark-border flex items-center justify-between">
           <h3
-            className="font-bold text-slate-900"
+            className="font-bold text-slate-900 dark:text-white"
             style={{ fontFamily: 'var(--font-heading)' }}
           >
             Activity
           </h3>
           {onCloseMobile && (
-            <button onClick={onCloseMobile} className="lg:hidden p-1 text-slate-400 hover:bg-slate-100 rounded-lg">
+            <button onClick={onCloseMobile} className="lg:hidden p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-dark-hover rounded-lg">
               <X size={18} />
             </button>
           )}
         </div>
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
         {loading && (
-          <p className="text-sm text-slate-400 text-center py-8">Loading…</p>
+          <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-8">Loading…</p>
         )}
         {!loading && activities.length === 0 && (
-          <p className="text-sm text-slate-400 text-center py-8">
+          <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-8">
             No activity yet
           </p>
         )}
@@ -60,13 +60,13 @@ const ActivityFeed = ({ activities = [], loading = false, mobileOpen = false, on
                 <IconComp size={16} style={{ color: config.clr }} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-slate-700 leading-snug">
-                  <span className="font-bold text-slate-900">
+                <p className="text-sm text-slate-700 dark:text-slate-300 leading-snug">
+                  <span className="font-bold text-slate-900 dark:text-white">
                     {item.user?.name || 'Someone'}
                   </span>{' '}
-                  <span className="text-slate-500">{item.message}</span>
+                  <span className="text-slate-500 dark:text-slate-400">{item.message}</span>
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                   {new Date(item.createdAt).toLocaleDateString('en-US', {
                     month: 'short',
                     day: 'numeric',

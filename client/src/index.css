@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-heading: "Outfit", system-ui, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-heading: "Plus Jakarta Sans", system-ui, sans-serif;
 
   --color-brand-50: #eef2ff;
   --color-brand-100: #e0e7ff;
@@ -14,6 +17,13 @@
   --color-brand-700: #4338ca;
   --color-brand-800: #3730a3;
   --color-brand-900: #312e81;
+
+  /* Dark surface tokens */
+  --color-dark-bg: #0f1117;
+  --color-dark-surface: #181a20;
+  --color-dark-card: #1e2028;
+  --color-dark-border: #2a2d37;
+  --color-dark-hover: #252830;
 }
 
 /* ── Base Resets ─────────────────────────────────────────── */
@@ -28,6 +38,12 @@ body {
   margin: 0;
   background-color: #f8fafc;
   color: #334155;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background-color: var(--color-dark-bg);
+  color: #c8cdd6;
 }
 
 /* ── Scrollbar ──────────────────────────────────────────── */
@@ -46,10 +62,28 @@ body {
   background: #94a3b8;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #3a3d47;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #50535f;
+}
+
 /* ── Utilities ──────────────────────────────────────────── */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* ── Dark mode form controls ────────────────────────────── */
+.dark select option {
+  background-color: var(--color-dark-card);
+  color: #c8cdd6;
+}
+
+/* Date input icon color fix in dark mode */
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
 }

@@ -30,17 +30,17 @@ const DashboardPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h2
-              className="text-2xl md:text-3xl font-bold text-slate-900"
+              className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white"
               style={{ fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}
             >
               {greeting}, {user?.name?.split(' ')[0]} 👋
             </h2>
-            <p className="text-slate-500 mt-1 text-sm">
+            <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">
               You have {projects.length} project{projects.length !== 1 ? 's' : ''} in your workspace.
             </p>
           </div>
           <div className="flex gap-2">
-            <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+            <button className="flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl hover:bg-slate-50 dark:hover:bg-dark-hover transition-colors cursor-pointer">
               <Filter size={16} /> Filter
             </button>
             <button
@@ -62,13 +62,13 @@ const DashboardPage = () => {
 
         {/* Projects grid */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-slate-800 text-base" style={{ fontFamily: 'var(--font-heading)' }}>
+          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-base" style={{ fontFamily: 'var(--font-heading)' }}>
             Your Projects
           </h3>
         </div>
 
         {loading ? (
-          <div className="text-center py-20 text-slate-400">Loading…</div>
+          <div className="text-center py-20 text-slate-400 dark:text-slate-500">Loading…</div>
         ) : projects.length === 0 ? (
           <EmptyState
             icon={FolderOpen}

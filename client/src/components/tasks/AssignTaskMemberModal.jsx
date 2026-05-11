@@ -32,23 +32,23 @@ const AssignTaskMemberModal = ({ open, onClose, onAssign, task, members = [] }) 
     <Modal open={open} onClose={onClose} title="Assign Task" maxWidth="max-w-md">
       <form onSubmit={handleSubmit} className="p-6 space-y-4">
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+          <div className="p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl text-sm text-red-700 dark:text-red-400">
             {error}
           </div>
         )}
         <div>
-          <label className="block text-sm font-semibold text-slate-700 mb-1.5">Assign To</label>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Assign To</label>
           <select
             value={assignedTo}
             onChange={(e) => setAssignedTo(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-500 transition-all"
+            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-hover text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-500/30 focus:border-brand-500 dark:focus:border-brand-500 transition-all"
           >
             <option value="">Unassigned</option>
             {members.map((m) => (
               <option key={m._id} value={m._id}>{m.name}</option>
             ))}
           </select>
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Select a member from the existing project members.
           </p>
         </div>
@@ -56,7 +56,7 @@ const AssignTaskMemberModal = ({ open, onClose, onAssign, task, members = [] }) 
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer"
+            className="px-4 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-dark-hover border border-slate-200 dark:border-dark-border rounded-xl hover:bg-slate-50 dark:hover:bg-dark-border transition-colors cursor-pointer"
           >
             Cancel
           </button>

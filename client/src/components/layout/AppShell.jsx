@@ -6,7 +6,7 @@ const AppShell = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
+    <div className="flex h-screen bg-slate-50 dark:bg-dark-bg overflow-hidden transition-colors duration-300">
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}

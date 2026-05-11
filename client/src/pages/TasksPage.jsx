@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Plus, CheckCircle2, Activity } from 'lucide-react';
+import { Plus, CheckCircle2, Activity, Search, ArrowUp, ArrowDown } from 'lucide-react';
 import useProjects from '../hooks/useProjects';
 import useTasks from '../hooks/useTasks';
 import useActivities from '../hooks/useActivities';
@@ -35,6 +35,10 @@ const TasksPage = () => {
   const [showMobileActivity, setShowMobileActivity] = useState(false);
   const [boardTasks, setBoardTasks] = useState([]);
   const [activeTask, setActiveTask] = useState(null);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('date');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   // Auto-select first project when list loads and nothing is selected
   useEffect(() => {
@@ -153,6 +157,7 @@ const TasksPage = () => {
     const activeTaskObj = boardTasks.find(t => t._id === activeId);
     if (!activeTaskObj) return;
 
+    // eslint-disable-next-line no-useless-assignment
     let overContainer = null;
     const isOverTask = over.data.current?.type === 'Task';
     if (isOverTask) {
@@ -168,9 +173,39 @@ const TasksPage = () => {
     }
   };
 
-  const todoTasks = boardTasks.filter(t => t.status === TASK_STATUS.TODO);
-  const inProgressTasks = boardTasks.filter(t => t.status === TASK_STATUS.IN_PROGRESS);
-  const doneTasks = boardTasks.filter(t => t.status === TASK_STATUS.DONE);
+  const filteredAndSortedTasks = useMemo(() => {
+    let result = [...boardTasks];
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(t => 
+        t.title?.toLowerCase().includes(q) || 
+        t.description?.toLowerCase().includes(q) ||
+        t.assignedTo?.name?.toLowerCase().includes(q)
+      );
+    }
+
+    result.sort((a, b) => {
+      let comparison = 0;
+      if (sortBy === 'date') {
+        comparison = new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime();
+      } else if (sortBy === 'importance') {
+        const priorityScore = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+        comparison = (priorityScore[a.priority] || 0) - (priorityScore[b.priority] || 0);
+      } else if (sortBy === 'user') {
+        const nameA = a.assignedTo?.name || 'zzzz';
+        const nameB = b.assignedTo?.name || 'zzzz';
+        comparison = nameA.localeCompare(nameB);
+      }
+      return sortOrder === 'asc' ? comparison : -comparison;
+    });
+
+    return result;
+  }, [boardTasks, searchQuery, sortBy, sortOrder]);
+
+  const todoTasks = filteredAndSortedTasks.filter(t => t.status === TASK_STATUS.TODO);
+  const inProgressTasks = filteredAndSortedTasks.filter(t => t.status === TASK_STATUS.IN_PROGRESS);
+  const doneTasks = filteredAndSortedTasks.filter(t => t.status === TASK_STATUS.DONE);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -181,22 +216,37 @@ const TasksPage = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
               <h2
-                className="text-2xl font-bold text-slate-900"
+                className="text-2xl font-bold text-slate-900 dark:text-white"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
                 Tasks
               </h2>
-              <p className="text-sm text-slate-500 mt-0.5">
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
                 {tasks.length} task{tasks.length !== 1 ? 's' : ''}
-                {filters.status ? ` · ${filters.status}` : ''}
               </p>
             </div>
-            <div className="flex gap-2 flex-wrap">
-              {/* Project selector */}
+            
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              {/* Search Bar */}
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search size={16} className="text-slate-400 dark:text-slate-500" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search tasks..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 pr-3 py-2 w-full sm:w-48 lg:w-64 text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-500/30 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                />
+              </div>
+
+              <div className="flex gap-2 flex-wrap">
+                {/* Project selector */}
               <select
                 value={selectedProjectId}
                 onChange={(e) => setSelectedProjectId(e.target.value)}
-                className="px-3 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-300"
+                className="px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-500/30"
               >
                 <option value="">Select Project</option>
                 {projects.map((p) => (
@@ -208,13 +258,33 @@ const TasksPage = () => {
               <select
                 value={filters.status}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 text-sm font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-300"
+                className="px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-500/30"
               >
                 <option value="">All Status</option>
                 {Object.values(TASK_STATUS).map((s) => (
                   <option key={s} value={s}>{s}</option>
                 ))}
               </select>
+
+              {/* Sort By filter */}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-200 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-500/30"
+              >
+                <option value="date">Sort by Date</option>
+                <option value="importance">Sort by Importance</option>
+                <option value="user">Sort by User</option>
+              </select>
+
+              {/* Sort Order Toggle */}
+              <button
+                onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+                className="flex items-center justify-center px-3 py-2 text-slate-600 dark:text-slate-300 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl outline-none hover:bg-slate-50 dark:hover:bg-dark-hover active:scale-95 transition-all cursor-pointer"
+                title={`Sort ${sortOrder === 'desc' ? 'Descending' : 'Ascending'}`}
+              >
+                {sortOrder === 'desc' ? <ArrowDown size={16} /> : <ArrowUp size={16} />}
+              </button>
 
               <button
                 onClick={() => setShowCreateModal(true)}
@@ -227,11 +297,12 @@ const TasksPage = () => {
               
               <button
                 onClick={() => setShowMobileActivity(true)}
-                className="flex lg:hidden items-center justify-center p-2 text-slate-500 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 active:scale-95 transition-all cursor-pointer"
+                className="flex lg:hidden items-center justify-center p-2 text-slate-500 dark:text-slate-400 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl hover:bg-slate-50 dark:hover:bg-dark-hover active:scale-95 transition-all cursor-pointer"
                 title="View Activity"
               >
                 <Activity size={18} />
               </button>
+            </div>
             </div>
           </div>
 
@@ -243,7 +314,7 @@ const TasksPage = () => {
               description="Choose a project from the dropdown to view its tasks."
             />
           ) : loading ? (
-            <div className="text-center py-20 text-slate-400">Loading…</div>
+            <div className="text-center py-20 text-slate-400 dark:text-slate-500">Loading…</div>
           ) : tasks.length === 0 ? (
             <EmptyState
               icon={CheckCircle2}
@@ -273,7 +344,7 @@ const TasksPage = () => {
                   title="To Do" 
                   tasks={todoTasks} 
                   colorClass="bg-slate-400" 
-                  borderClass="border-slate-200"
+                  borderClass="border-slate-200 dark:border-dark-border"
                   onEdit={(t) => setTaskToUpdate(t)}
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}
@@ -284,7 +355,7 @@ const TasksPage = () => {
                   title="In Progress" 
                   tasks={inProgressTasks} 
                   colorClass="bg-brand-500" 
-                  borderClass="border-brand-200"
+                  borderClass="border-brand-200 dark:border-brand-500/30"
                   onEdit={(t) => setTaskToUpdate(t)}
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}
@@ -295,7 +366,7 @@ const TasksPage = () => {
                   title="Done" 
                   tasks={doneTasks} 
                   colorClass="bg-emerald-500" 
-                  borderClass="border-emerald-200"
+                  borderClass="border-emerald-200 dark:border-emerald-500/30"
                   onEdit={(t) => setTaskToUpdate(t)}
                   onDelete={onDelete}
                   onStatusChange={onStatusChange}

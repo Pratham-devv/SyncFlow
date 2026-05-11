@@ -6,14 +6,15 @@ import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailsPage from './pages/ProjectDetailsPage';
 import TasksPage from './pages/TasksPage';
+import SettingsPage from './pages/SettingsPage';
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-slate-400 text-sm">Loading…</div>
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-dark-bg">
+        <div className="text-slate-400 dark:text-slate-500 text-sm">Loading…</div>
       </div>
     );
   }
@@ -26,24 +27,6 @@ const GuestRoute = ({ children }) => {
   if (loading) return null;
   return user ? <Navigate to="/" replace /> : children;
 };
-
-// Placeholder page
-const PlaceholderPage = ({ name }) => (
-  <div className="flex-1 flex items-center justify-center text-center p-8">
-    <div>
-      <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
-        <span className="text-2xl">🚧</span>
-      </div>
-      <h3
-        className="font-bold text-slate-700 text-lg mb-2"
-        style={{ fontFamily: 'var(--font-heading)' }}
-      >
-        {name}
-      </h3>
-      <p className="text-slate-400 text-sm">This section is coming soon.</p>
-    </div>
-  </div>
-);
 
 const AppRoutes = () => (
   <Routes>
@@ -65,7 +48,7 @@ const AppRoutes = () => (
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/projects/:id" element={<ProjectDetailsPage />} />
               <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/settings" element={<PlaceholderPage name="Settings" />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AppShell>

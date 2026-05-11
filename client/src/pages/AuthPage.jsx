@@ -58,7 +58,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-50">
+    <div className="min-h-screen flex bg-slate-50 dark:bg-dark-bg">
       {/* Left brand panel */}
       <div
         className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
@@ -151,7 +151,7 @@ const AuthPage = () => {
               <RefreshCw size={20} />
             </div>
             <span
-              className="text-2xl font-bold text-slate-900"
+              className="text-2xl font-bold text-slate-900 dark:text-white"
               style={{ fontFamily: 'var(--font-heading)' }}
             >
               SyncFlow
@@ -159,7 +159,7 @@ const AuthPage = () => {
           </div>
 
           <h1
-            className="text-3xl font-bold text-slate-900 mb-2"
+            className="text-3xl font-bold text-slate-900 dark:text-white mb-2"
             style={{
               fontFamily: 'var(--font-heading)',
               letterSpacing: '-0.02em',
@@ -167,14 +167,14 @@ const AuthPage = () => {
           >
             {tab === 'login' ? 'Welcome back' : 'Create account'}
           </h1>
-          <p className="text-slate-500 text-sm mb-8">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-8">
             {tab === 'login'
               ? 'Sign in to your collaborative workspace.'
               : 'Get started with your free account.'}
           </p>
 
           {/* Tabs */}
-          <div className="flex bg-slate-100 rounded-xl p-1 mb-8">
+          <div className="flex bg-slate-100 dark:bg-dark-surface rounded-xl p-1 mb-8">
             {['login', 'signup'].map((t) => (
               <button
                 key={t}
@@ -186,8 +186,8 @@ const AuthPage = () => {
                 }}
                 className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 cursor-pointer ${
                   tab === t
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-white dark:bg-dark-card text-slate-900 dark:text-white shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                 }`}
               >
                 {t === 'login' ? 'Log In' : 'Sign Up'}
@@ -197,12 +197,12 @@ const AuthPage = () => {
 
           {/* Messages */}
           {apiError && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 rounded-xl text-sm text-red-700 dark:text-red-400">
               {apiError}
             </div>
           )}
           {signupSuccess && (
-            <div className="mb-4 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
+            <div className="mb-4 p-3 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl text-sm text-emerald-700 dark:text-emerald-400">
               {signupSuccess}
             </div>
           )}
@@ -210,7 +210,7 @@ const AuthPage = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {tab === 'signup' && (
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                   Full Name
                 </label>
                 <input
@@ -219,16 +219,16 @@ const AuthPage = () => {
                   value={form.name}
                   onChange={onChange}
                   placeholder="Alex Johnson"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-500 transition-all"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-500/30 focus:border-brand-500 dark:focus:border-brand-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 {errors.name && (
-                  <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">{errors.name}</p>
                 )}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                 Email Address
               </label>
               <input
@@ -237,15 +237,15 @@ const AuthPage = () => {
                 value={form.email}
                 onChange={onChange}
                 placeholder="you@company.com"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-500 transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-500/30 focus:border-brand-500 dark:focus:border-brand-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
               />
               {errors.email && (
-                <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+                <p className="text-xs text-red-500 dark:text-red-400 mt-1">{errors.email}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -255,18 +255,18 @@ const AuthPage = () => {
                   value={form.password}
                   onChange={onChange}
                   placeholder="••••••••"
-                  className="w-full px-4 py-2.5 pr-12 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-500 transition-all"
+                  className="w-full px-4 py-2.5 pr-12 rounded-xl border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card text-slate-900 dark:text-white text-sm outline-none focus:ring-2 focus:ring-brand-300 dark:focus:ring-brand-500/30 focus:border-brand-500 dark:focus:border-brand-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                 >
                   {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+                <p className="text-xs text-red-500 dark:text-red-400 mt-1">{errors.password}</p>
               )}
             </div>
 
@@ -287,13 +287,13 @@ const AuthPage = () => {
             </button>
           </form>
 
-          <p className="text-center text-sm text-slate-500 mt-6">
+          <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
             {tab === 'login'
               ? "Don't have an account?"
               : 'Already have an account?'}{' '}
             <button
               onClick={() => setTab(tab === 'login' ? 'signup' : 'login')}
-              className="text-brand-600 font-bold hover:underline cursor-pointer"
+              className="text-brand-600 dark:text-brand-400 font-bold hover:underline cursor-pointer"
             >
               {tab === 'login' ? 'Sign up free' : 'Log in'}
             </button>
