@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 
-const AppShell = ({ children, onNewProject }) => {
+const AppShell = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -10,7 +10,6 @@ const AppShell = ({ children, onNewProject }) => {
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onNewProject={onNewProject}
       />
       <div className="flex-1 flex flex-col overflow-hidden min-w-0 lg:ml-64">
         <TopBar onMenu={() => setSidebarOpen(true)} />

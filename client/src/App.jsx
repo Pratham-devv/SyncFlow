@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from 'react';
 import { useAuth } from './context/AuthContext';
 import AppShell from './components/layout/AppShell';
 import AuthPage from './pages/AuthPage';
@@ -20,7 +19,7 @@ const ProtectedRoute = ({ children }) => {
   return user ? children : <Navigate to="/auth" replace />;
 };
 
-// Guest-only route (redirect logged-in users to dashboard)
+// Guest-only route
 const GuestRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -45,49 +44,34 @@ const PlaceholderPage = ({ name }) => (
   </div>
 );
 
-const AppRoutes = () => {
-  // Shared "new project" modal state lifted to AppShell
-  const [showNewProject, setShowNewProject] = useState(false);
-
-  return (
-    <Routes>
-      <Route
-        path="/auth"
-        element={
-          <GuestRoute>
-            <AuthPage />
-          </GuestRoute>
-        }
-      />
-      <Route
-        path="/*"
-        element={
-          <ProtectedRoute>
-            <AppShell onNewProject={() => setShowNewProject(true)}>
-              <Routes>
-                <Route
-                  path="/"
-                  element={
-                    <DashboardPage
-                      onNewProject={() => setShowNewProject(true)}
-                    />
-                  }
-                />
-                <Route path="/projects" element={<ProjectsPage />} />
-                <Route path="/tasks" element={<TasksPage />} />
-                <Route
-                  path="/settings"
-                  element={<PlaceholderPage name="Settings" />}
-                />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </AppShell>
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
-  );
-};
+const AppRoutes = () => (
+  <Routes>
+    <Route
+      path="/auth"
+      element={
+        <GuestRoute>
+          <AuthPage />
+        </GuestRoute>
+      }
+    />
+    <Route
+      path="/*"
+      element={
+        <ProtectedRoute>
+          <AppShell>
+            <Routes>
+              <Route path="/" element={<DashboardPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/settings" element={<PlaceholderPage name="Settings" />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </AppShell>
+        </ProtectedRoute>
+      }
+    />
+  </Routes>
+);
 
 const App = () => (
   <BrowserRouter>

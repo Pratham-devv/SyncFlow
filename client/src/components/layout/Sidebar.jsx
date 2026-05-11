@@ -21,7 +21,7 @@ const ICON_MAP = {
   Settings,
 };
 
-const Sidebar = ({ open, onClose, onNewProject }) => {
+const Sidebar = ({ open, onClose }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -66,11 +66,11 @@ const Sidebar = ({ open, onClose, onNewProject }) => {
           </div>
         </div>
 
-        {/* New project */}
+        {/* New project — navigates to /projects with create flag */}
         <div className="p-4">
           <button
             onClick={() => {
-              onNewProject?.();
+              navigate('/projects?create=true');
               onClose?.();
             }}
             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white hover:opacity-90 active:scale-95 transition-all cursor-pointer"
@@ -124,7 +124,7 @@ const Sidebar = ({ open, onClose, onNewProject }) => {
           </button>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer"
           >
             <LogOut size={18} />
             Logout
